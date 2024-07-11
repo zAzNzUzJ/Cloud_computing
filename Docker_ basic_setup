@@ -1,0 +1,61 @@
+##CENTOS-7 ()
+
+curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo
+# get the repo - 
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/docker-ce.repo 
+
+#installing the required package
+yum --enablerepo=docker-ce-stable install docker-ce 
+
+systemctl enable --now docker
+#enable the docker
+
+rpm -q docker-ce 
+
+#pulls image file from docker hub public
+
+docker pull centos
+
+docker run -it centos /bin/bash
+# will give the centos image  container file console terminal
+-container># use as normal centos terminal
+
+
+else
+
+
+#create a dockefile fo build the container
+vim Dockerfile
+
+#####################Dockerfile#################
+FROM centos
+RUN  sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN yum -y install httpd
+RUN echo "Test server for Docker httpd server" > /var/www/html/index.html
+
+EXPOSE 80
+CMD ["-D", "FOREGROUND"]
+ENTRYPOINT ["/usr/sbin/httpd"]
+
+############################################
+
+docker build -t testimage:1v
+docker build <imagename>:<tag/version>
+
+docker images
+
+docker run -d -p 8080:80 testimage:1v
+# run the container -- in port 8080 localhost  such that the web server hosts in 8080 localhost
+
+docker ps
+
+check the docker container process running 
+
+check the webserver by
+curl localhost:8080
+or the ip:8080
+
+
+docker kill <container ID >
+ kill the process
